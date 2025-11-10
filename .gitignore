@@ -1,0 +1,107 @@
+# .gitignore for Blazor WebAssembly/.NET 9/Visual Studio
+
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Dotnet artifacts
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# Npm
+node_modules/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Others
+*.dbmdl
+*.bak
+*.backup
+*.tmp
+*.temp
+*.swp
+
+# Publish output
+wwwroot/dist/
+wwwroot/node_modules/
+
+# Blazor WebAssembly
+wwwroot/appsettings.*.json
+
+# Local secrets
+secrets.json
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Test results
+TestResults/
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# Ignore coverage report
+coverage.json
+
+# Others
+*.vspscc
+*.vssscc
+
+# Solution user launch settings (do not check in)
+*.slnLaunch.user
+
+# Visual Studio folder
+.vs/
+
+# Entity Framework Migrations
+Migrations/
+
+# End of .gitignore
+
+# Docker Compose files
+# docker-compose.build.yml - KEPT IN GIT (build-only file)
+docker-compose.yml  # Generated at deployment from template - NOT in Git
+docker-compose.override.yml
+.env
+.env.test
+.env.staging
+.env.production

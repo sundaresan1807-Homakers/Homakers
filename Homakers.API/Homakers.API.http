@@ -1,0 +1,6 @@
+@Homakers.API_HostAddress = http://localhost:5178
+
+GET {{Homakers.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
