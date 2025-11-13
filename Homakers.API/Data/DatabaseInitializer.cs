@@ -29,25 +29,6 @@ namespace Homakers.API.Data
                         IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'{databaseName}')
                         BEGIN
                             CREATE DATABASE {databaseName}
-                                ON PRIMARY
-                                (
-                                    NAME = {databaseName},
-                                    FILENAME = 'C:\SourceCode\Data\{databaseName}_Data.mdf',
-                                     SIZE = 500MB,
-                                    MAXSIZE = UNLIMITED,
-                                    FILEGROWTH = 1MB
-                                )
-                                LOG ON
-                                (
-                                    NAME = {databaseName}_Log,
-                                    FILENAME = 'C:\SourceCode\Log\{databaseName}_Log.ldf',
-                                    SIZE = 500MB,
-                                    MAXSIZE = 2000MB,
-                                    FILEGROWTH = 1MB
-                                );
-
-
-                                 
                         END";
                     command.ExecuteNonQuery();
                 }
@@ -56,7 +37,7 @@ namespace Homakers.API.Data
 
         public static void EnsureDatabaseAndSchema(string connectionString)
         {
-            EnsureDatabase(connectionString);
+           EnsureDatabase(connectionString);
 
             var scriptPath = Path.Combine(AppContext.BaseDirectory, "TableCreation");
             var upgrader = DeployChanges.To
@@ -88,16 +69,17 @@ namespace Homakers.API.Data
             var procParams = new Dictionary<string, object>() { };
             var ProfessionalsList = ExecuteStoredProc<Professionals>("SELECT * FROM PROFESSIONALS", procParams, "Query", connection);
             var objList = ExecuteStoredProc<Profession>("SELECT * FROM PROFESSION", procParams, "Query", connection);
+            var districtList = ExecuteStoredProc<Districts>("SELECT * FROM DISTRICTS", procParams, "Query", connection);
             if (ProfessionalsList.Count == 0)
             {
                 if (objList?.Count > 0)
                 {
                     for (int i = 0; i < objList.Count; i++)
                     {
-                        for (int j = 0; j <= 10; j++)
+                        for (int j = 0; j < 35; j++)
                         {
-                            string inserquery = @"Insert Into Professionals(Name, Email, Username, Password, Mobile, ProfessionID) VALUES('Professional_" + i+j + "','Professional_" + i + j + "@mail.com'"
-                                + ",'Professional_"+i+"00" + j + "','pro@123','" + 14356789 + j + "','" + objList[i].ProfessionID + "');";
+                            string inserquery = @"Insert Into Professionals(Name, Email, Username, Password, Mobile, ProfessionID, DistrictID) VALUES('Professional_" + i + j + "','Professional_" + i + j + "@mail.com'"
+                                + ",'Professional_" + i + "00" + j + "','pro@123','" + 14356789 + j + "','" + objList[i].ProfessionID + "','" + districtList[j].DistrictID + "');";
                             ExecuteStoredProc<Professionals>(inserquery, procParams, "Query", connection);
                         }
 
@@ -105,6 +87,22 @@ namespace Homakers.API.Data
                 }
 
             }
+
+
+            //if (ProfessionalsList.Count == 0)
+            //{
+            //    if (districtList?.Count > 0)
+            //    {
+            //        for (int i = 0; i < ProfessionalsList.Count; i++)
+            //        {
+
+            //            string inserquery = @"UPDATE Professionals SET DistrictID='" + districtList[i].DistrictID + "' WHERE ProfessionalsID='" + ProfessionalsList[i].ProfessionalsID + "'";
+            //            ExecuteStoredProc<Professionals>(inserquery, procParams, "Query", connection);
+
+            //        }
+            //    }
+
+            //}
         }
         public static List<T> ExecuteStoredProc<T>(string storedProcName, Dictionary<string, object> procParams, string commandType, SqlConnection conn) where T : class
         {

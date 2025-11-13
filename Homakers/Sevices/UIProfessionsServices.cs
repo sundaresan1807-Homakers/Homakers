@@ -1,10 +1,5 @@
 ﻿using Homakers.Applications.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Homakers.Sevices
 {
@@ -12,7 +7,7 @@ namespace Homakers.Sevices
     {
         private readonly HttpClient _httpClient;
         private static readonly JsonSerializerOptions _json = new() { PropertyNameCaseInsensitive = true };
-
+        private string? apiAddress = GlobalConstants.BaseAPIAddress;
         public UIProfessionsServices(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -22,7 +17,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://localhost:7269/api/Profession/GetProfessionsAsync";
+                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Profession/GetProfessionsAsync";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -56,7 +51,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://localhost:7269/api/Profession/GetProfessionsByUsername?name={name}";
+                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Profession/GetProfessionsByUsername?name={name}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)

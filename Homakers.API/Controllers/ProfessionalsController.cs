@@ -20,6 +20,19 @@ namespace Homakers.API.Controllers
             return Ok(customerList);
         }
 
+        [HttpGet("GetProfessionalsSummary")]
+        public async Task<ActionResult> GetProfessionalsSummary(
+            [FromQuery] int pageNumber = 1
+            , [FromQuery] int pageSize = 10
+            , [FromQuery] string? districtName = null
+            , [FromQuery] string? professionName = null
+            , [FromQuery] string? professionalName = null
+            )
+        {
+            var customerList = await _professionalService.GetProfessionalsSummary(pageNumber, pageSize, districtName, professionName, professionalName);
+            return Ok(customerList);
+        }
+
         [HttpGet("GetProfessionalsByUsername")]
         public async Task<ActionResult> GetProfessionalsByUsername([FromQuery] string username)
         {
@@ -40,5 +53,20 @@ namespace Homakers.API.Controllers
             var customerList = await _professionalService.ValidateProfessional(username, password);
             return Ok(customerList);
         }
+
+        [HttpGet("GetProfessionalsByProfessionID")]
+        public async Task<ActionResult> GetProfessionalsByProfessionID([FromQuery] string professionID)
+        {
+            var customerList = await _professionalService.GetProfessionalsByProfessionID(professionID);
+            return Ok(customerList);
+        }
+
+        [HttpGet("GetProfessionalsByProfessionalID")]
+        public async Task<ActionResult> GetProfessionalsByProfessionalID([FromQuery] string professionalID)
+        {
+            var customerList = await _professionalService.GetProfessionalsByProfessionalID(professionalID);
+            return Ok(customerList);
+        }
+
     }
 }

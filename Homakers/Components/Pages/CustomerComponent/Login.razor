@@ -2,9 +2,9 @@
 @using Homakers.Applications.DTOs
 @using Homakers.SQLite.Models
 @inject Homakers.Sevices.UICustomerService _customerService
-@inject Homakers.Sevices.UIProfessionsServices _professionsService
-@inject Homakers.Sevices.UIProfessionalService _professionalService
-@inject Homakers.SQLite.ProfessionSQLiteServices _sqliteDb
+
+@inject Homakers.SQLite.CustomerSQLiteInitializer _sqliteDb
+@inject NavigationManager _navigationManager
 
 <div>
     <div class="mb-3">
@@ -27,42 +27,60 @@
     {
         <div class="text-success mt-2">@successMessage</div>
     }
+    @if (error != null || error == "")
+    {
+        <p>
+            @error
+        </p>
+    }
 </div>
 
 @code {
     private CustomerDto? _customer { get; set; }
     private string? errorMessage; string? successMessage;
+    private string error { get; set; }
+    private SCustomers sCustomer { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _customer = new CustomerDto();
+        sCustomer = new SCustomers();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        sCustomer = await _sqliteDb.GetCurrentCustomerAsync();
     }
 
     private async Task HandleLogin()
     {
-        CustomerDto? customerDto = await _customerService.ValidateCustomer(_customer.Username,_customer.Password);
-        if (customerDto.Username!=null)
+        try
         {
-            errorMessage = string.Empty;
-            successMessage = "Login Success";
-            List<ProfessionsDto> professionList = await _professionsService.GetProfessionsAsync();
-           // int removeProfession = await _sqliteDb.DeleteProfessionAsync();
-            foreach(ProfessionsDto professionsDto in professionList)
+            CustomerDto? customerDto = await _customerService.ValidateCustomer(_customer.Username, _customer.Password);
+            if (customerDto.Username != null)
             {
-                SProfessions sProfession = new SProfessions();
-                sProfession.ProfessionID = professionsDto.ProfessionID;
-                sProfession.ProfessionName = professionsDto.ProfessionName;
-                sProfession.MaxPrice = professionsDto.MaxPrice;
-                sProfession.MinPrice = professionsDto.MinPrice;
-                _sqliteDb.AddProfessionAsync(sProfession);
+                errorMessage = string.Empty;
+                successMessage = "Login Success";
+                SCustomers sCustomer = new SCustomers();
+                sCustomer.CustomerID = customerDto.CustomerID;
+                sCustomer.Name = customerDto.Name;
+                sCustomer.Email = customerDto.Email;
+                sCustomer.Mobile = customerDto.Mobile;
+                sCustomer.Username = customerDto.Username;
+                sCustomer.Password = customerDto.Password;
+                sCustomer.IsActive = true;
+                await _sqliteDb.SavesCustomerAsync(sCustomer);
+                _navigationManager.NavigateTo($"/");
             }
-             List<SProfessions> ProfessionList = await _sqliteDb.GetProfessionAsync();
-            // _sqliteDb.AddCustomerAsync()
+            else
+            {
+                successMessage = string.Empty;
+                errorMessage = "Invalid username or password.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            successMessage = string.Empty;
-            errorMessage = "Invalid username or password.";
+            error = ex.Message;
         }
     }
 }

@@ -23,6 +23,9 @@ namespace Homakers.Domain
         public DbSet<Profession> Profession { get; set; }
         public DbSet<Professionals> Professionals { get; set; }
         public DbSet<Customers> Customers { get; set; }
+        public DbSet<Districts> Districts { get; set; }
+        public DbSet<BookService> BookService { get; set; }
+
     }
 }
 

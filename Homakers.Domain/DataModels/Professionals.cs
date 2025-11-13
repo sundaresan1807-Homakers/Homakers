@@ -17,5 +17,6 @@ namespace Homakers.Domain.DataModels
         public  string? Password { get; set; }
         public  int Mobile { get; set; }
         public  Guid ProfessionID { get; set; }
+        public Guid DistrictID { get; set; }
     }
 }

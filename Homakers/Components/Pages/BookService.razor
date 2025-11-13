@@ -1,0 +1,135 @@
+﻿@page "/bookService"
+@using Homakers.Applications.DTOs
+@inject NavigationManager _navigationManager
+@inject Homakers.Sevices.UIProfessionsServices _professionsService
+@inject Homakers.Sevices.UIProfessionalService _professionalService
+@inject Homakers.Sevices.UIUtilityServices _utilityServices
+@inject Homakers.Sevices.UIBookServicesService _bookServices
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card text-center">
+                <div class="card-header">
+                    Book Service
+                    <i class="fa fa-close" style="float:right;" @onclick="GotoHome"></i>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" style="float:left;font-size:13px;">Professional Name</h5>
+                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.Name</p>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" style="float:left;font-size:13px;">Location</h5>
+                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.DistrictName</p>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" style="float:left;font-size:13px;">Service Type</h5>
+                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.ProfessionName</p>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" style="float:left;font-size:13px;">Price Range</h5>
+                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.MinPrice - @mappedProfessional.MaxPrice</p>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" style="float:left;font-size:13px;">Mobile</h5>
+                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.Mobile</p>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" style="float:left;font-size:13px;">Email</h5>
+                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.Email</p>
+                </div>
+                <div class="card-footer">
+                    @if(BookServiceID == Guid.Empty)
+                    {
+                        <button type="button" href="#" class="btn btn-primary" @onclick="BookServiceByCustomer">Book Service</button>
+                    }
+                    else
+                    {
+                        <p>Service Booked Successfully</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [SupplyParameterFromQuery] public string Id { get; set; }
+    [SupplyParameterFromQuery] public string CustomerId { get; set; }
+
+    private ProfessionalsDto? professional { get; set; }
+    private List<ProfessionsDto> professionList { get; set; }
+    private ProfessionalProfession mappedProfessional { get; set; }
+    private BookServiceDto customerBookedService { get; set; }
+    private BookServiceDto resultBookedService { get; set; }
+    private BookServicesUniqueKeysDto uniqueKeysDto { get; set; }
+    private Guid? BookServiceID { get; set; }
+    private string? error { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        mappedProfessional = new ProfessionalProfession();
+        resultBookedService = new BookServiceDto();
+        uniqueKeysDto = new BookServicesUniqueKeysDto();
+        customerBookedService = new BookServiceDto();
+        BookServiceID = Guid.Empty;
+        if (Id != null)
+        {
+            professional = await _professionalService.GetProfessionalsByProfessionalID(Id);
+            professionList = await _professionsService.GetProfessionsAsync();
+            MapProfessional();
+            uniqueKeysDto.ProfessionID = mappedProfessional.ProfessionID;
+            uniqueKeysDto.CustomerID = mappedProfessional.CustomerID;
+            uniqueKeysDto.ProfessionalsID = mappedProfessional.ProfessionalsID;
+            customerBookedService = await _bookServices.GetBookingServiceByUniqueKey(uniqueKeysDto);
+            BookServiceID = customerBookedService.BookServiceID;
+        }
+    }
+    private void GotoHome()
+    {
+        _navigationManager.NavigateTo("/");
+    }
+
+    private void MapProfessional()
+    {
+        mappedProfessional = new ProfessionalProfession();
+        ProfessionsDto? profession = professionList.Where(pro => pro.ProfessionID == professional.ProfessionID).FirstOrDefault();
+        if (profession.ProfessionID == professional.ProfessionID)
+        {
+            mappedProfessional.ProfessionID = professional.ProfessionID;
+            mappedProfessional.ProfessionalsID = professional.ProfessionalsID;
+            mappedProfessional.ProfessionName = profession.ProfessionName;
+            mappedProfessional.MinPrice = profession.MinPrice;
+            mappedProfessional.MaxPrice = profession.MaxPrice;
+            mappedProfessional.Name = professional.Name;
+            mappedProfessional.Email = professional.Email;
+            mappedProfessional.Mobile = professional.Mobile;
+            mappedProfessional.DistrictName = professional.DistrictName;
+            mappedProfessional.CustomerID = Guid.Parse(CustomerId);
+        }
+    }
+
+    private async Task BookServiceByCustomer()
+    {
+        BookServiceDto bookService = new BookServiceDto();
+        bookService.CustomerID = Guid.Parse(CustomerId);;
+        bookService.ProfessionalsID = mappedProfessional.ProfessionalsID;
+        bookService.ProfessionID = mappedProfessional.ProfessionID;
+        bookService.Price = mappedProfessional.MaxPrice;
+        bookService.SGST = 0;
+        bookService.CGST = 0;
+        bookService.TotalPrice =bookService.Price+bookService.SGST+bookService.CGST;
+        bookService.CreatedDateTime = DateTime.Now;
+        bookService.BookingStatus = "Pending";
+        bookService.AcceptedDateTime = null;
+        bookService.RejectedDateTime = null;
+        bookService.UpdatedDateTime = null;
+        resultBookedService = await _bookServices.BookServiceByCustomer(bookService);
+        BookServiceID = resultBookedService.BookServiceID;
+    }
+
+}

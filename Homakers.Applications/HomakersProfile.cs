@@ -17,6 +17,9 @@ namespace Homakers.Applications
             CreateMap<Customers, CustomerDto>().ReverseMap();
             CreateMap<Professionals, ProfessionalsDto>().ReverseMap();
             CreateMap<Profession, ProfessionsDto>().ReverseMap();
+            CreateMap<Districts, DistrictsDto>().ReverseMap();
+            CreateMap<BookService, BookServiceDto>().ReverseMap();
+            CreateMap<BookService, BookServicesUniqueKeysDto>().ReverseMap();
         }
     }
 

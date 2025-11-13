@@ -1,9 +1,11 @@
 -- ******** Table Creation ********
+--ALTER TABLE Professionals DROP CONSTRAINT FK_Profession;
+--ALTER TABLE Professionals DROP CONSTRAINT FK_District;
 --Drop Table Professionals
 --Drop Table Profession
 --Drop Table Customers
 --Drop Table BookService
---Drop Database HomakersDb
+--DROP TABLE Districts
 
 
 --Select * from Professionals
@@ -19,6 +21,14 @@ Create table Profession
 	, MaxPrice decimal(3) NOT NULL
 );
 
+Create Table Districts
+(
+	DistrictID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID() NOT NULL
+	, DistrictName nvarchar(100) NOT NULL
+	, IsActive int NOT NULL
+	, CreatedDateTime datetime NOT NULL
+	, UpdatedDateTime datetime NULL 
+);
 
 -- Professionals
 Create Table Professionals
@@ -30,9 +40,11 @@ Create Table Professionals
 	, Password NVARCHAR(255) NOT NULL
 	, Mobile int NOT NULL
 	, ProfessionID UNIQUEIDENTIFIER NOT NULL
+	, DistrictID UNIQUEIDENTIFIER NOT NULL
 );
 
-ALTER TABLE Professionals ADD CONSTRAINT FK_Professionals FOREIGN KEY (ProfessionID) REFERENCES Profession(ProfessionID);
+ALTER TABLE Professionals ADD CONSTRAINT FK_Profession FOREIGN KEY (ProfessionID) REFERENCES Profession(ProfessionID);
+ALTER TABLE Professionals ADD CONSTRAINT FK_District FOREIGN KEY (DistrictID) REFERENCES Districts(DistrictID);
 
 
 -- Customers
@@ -62,3 +74,4 @@ CREATE TABLE BookService(
 	, CreatedDateTime datetime NOT NULL
 	, UpdatedDateTime datetime NULL
 );
+

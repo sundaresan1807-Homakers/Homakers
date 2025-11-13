@@ -17,6 +17,7 @@ namespace Homakers.Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
+
         public async Task<List<Professionals>> GetProfessionalsAsync()
         {
             List<Professionals> professionalList = new List<Professionals>();
@@ -75,6 +76,41 @@ namespace Homakers.Infrastructure.Repositories
             try
             {
                 professional = await _dbContext.Professionals.Where(pro => pro.Username == username && pro.Password == password).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+
+            }
+            return professional;
+        }
+        public async Task<List<Professionals>> GetProfessionalsByProfessionID(string professionID)
+        {
+            List<Professionals> professionalList = new List<Professionals>();
+            try
+            {
+                professionalList = await _dbContext.Professionals.Where(pro => pro.ProfessionID.ToString().Contains(professionID)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+
+            }
+            return professionalList;
+        }
+
+        public async Task<Professionals?> GetProfessionalsByProfessionalID(Guid professionalID)
+        {
+            Professionals? professional = new Professionals();
+            try
+            {
+                professional = await _dbContext.Professionals.Where(pro => pro.ProfessionalsID == professionalID).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

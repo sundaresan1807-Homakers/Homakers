@@ -13,5 +13,7 @@ namespace Homakers.Applications.RepoInterfaces
         public Task<Professionals?> GetProfessionalsByUsername(string username);
         public Task<List<Professionals>> GetProfessionalsByName(string customerName);
         public Task<Professionals?> ValidateProfessional(string username, string password);
+        public Task<List<Professionals>> GetProfessionalsByProfessionID(string professionID);
+        public Task<Professionals> GetProfessionalsByProfessionalID(Guid professionalID);
     }
 }

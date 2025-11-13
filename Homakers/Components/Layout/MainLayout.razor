@@ -1,17 +1,32 @@
 ﻿@inherits LayoutComponentBase
 
+@using Homakers.SQLite.Models
+@inject Homakers.SQLite.CustomerSQLiteInitializer _sqliteDb
+@inject NavigationManager _navigationManager
+
 <div class="page">
-    <div class="sidebar">
+    @* <div class="sidebar">
         <NavMenu />
-    </div>
+    </div> *@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <button type="button" @onclick="Logout" class="btn btn-primary">Logout</button>
         </div>
-
-        <article class="content px-4">
+        <div class="container-fluid">
             @Body
-        </article>
+        </div>
+        @* <article class="content px-4">
+            @Body
+        </article> *@
     </main>
 </div>
+@code 
+{
+    private async Task Logout()
+    {
+        SCustomers sCustomer = await _sqliteDb.GetCurrentCustomerAsync();
+        await _sqliteDb.DeletesCustomerAsync(sCustomer);
+        _navigationManager.NavigateTo("/login");
+    }
+}

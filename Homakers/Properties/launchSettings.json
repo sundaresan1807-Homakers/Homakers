@@ -2,7 +2,12 @@
   "profiles": {
     "Windows Machine": {
       "commandName": "Project",
-      "nativeDebugging": false
+      "nativeDebugging": false,
+      "environmentVariables": {
+        //"APIBaseAddress": "https://localhost:7269",
+        "APIBaseAddress": "https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/"
+
+      }
     }
   }
 }
