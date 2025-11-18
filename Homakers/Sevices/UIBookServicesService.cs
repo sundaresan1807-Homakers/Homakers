@@ -25,7 +25,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/BookService/GetBookingServiceByCustomerId?customerId={customerId}";
+                var url = GlobalConstants.BaseAPIAddress + $"/api/BookService/GetBookingServiceByCustomerId?customerId={customerId}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -60,7 +60,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/BookService/GetBookingServiceByProfessionalsID?professionalId={professionalId}";
+                var url = GlobalConstants.BaseAPIAddress + $"/api/BookService/GetBookingServiceByProfessionalsID?professionalId={professionalId}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -90,11 +90,13 @@ namespace Homakers.Sevices
                 throw;
             }
         }
+
         public async Task<BookServiceDto?> GetBookingServiceByUniqueKey(BookServicesUniqueKeysDto bookServiceDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync($"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/BookService/GetBookingServiceByUniqueKey", bookServiceDto);
+                var url = GlobalConstants.BaseAPIAddress + $"/api/BookService/GetBookingServiceByUniqueKey/";
+                var response = await _httpClient.PostAsJsonAsync(url, bookServiceDto);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
                 {
@@ -124,16 +126,15 @@ namespace Homakers.Sevices
             }
         }
 
-
         public async Task<BookServiceDto?> BookServiceByCustomer(BookServiceDto bookServiceDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync($"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/BookService/BookServiceByCustomer", bookServiceDto);
+                var response = await _httpClient.PostAsJsonAsync(GlobalConstants.BaseAPIAddress + $"/api/BookService/BookServiceByCustomer", bookServiceDto);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.Error.WriteLine($"HTTP error in GetBookingServiceByProfessionalsID: StatusCode={response.StatusCode}, Body={responseBody}");
+                    Console.Error.WriteLine($"HTTP error in BookServiceByCustomer: StatusCode={response.StatusCode}, Body={responseBody}");
                     throw new HttpRequestException($"Request failed with status {response.StatusCode}");
                 }
                 try
@@ -143,18 +144,86 @@ namespace Homakers.Sevices
                 }
                 catch (System.Text.Json.JsonException ex)
                 {
-                    Console.Error.WriteLine($"JSON error in GetBookingServiceByProfessionalsID: {ex.Message}\nRaw response: {responseBody}");
+                    Console.Error.WriteLine($"JSON error in BookServiceByCustomer: {ex.Message}\nRaw response: {responseBody}");
                     throw;
                 }
             }
             catch (HttpRequestException ex)
             {
-                Console.Error.WriteLine($"HTTP request error in GetBookingServiceByProfessionalsID: {ex.Message}");
+                Console.Error.WriteLine($"HTTP request error in BookServiceByCustomer: {ex.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Unexpected error in GetBookingServiceByProfessionalsID: {ex.Message}");
+                Console.Error.WriteLine($"Unexpected error in BookServiceByCustomer: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<BookServiceDto?> AcceptServiceByProfessional(BookServiceDto bookServiceDto)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(GlobalConstants.BaseAPIAddress + $"/api/BookService/AcceptServiceByProfessional", bookServiceDto);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.Error.WriteLine($"HTTP error in AcceptServiceByProfessional: StatusCode={response.StatusCode}, Body={responseBody}");
+                    throw new HttpRequestException($"Request failed with status {response.StatusCode}");
+                }
+                try
+                {
+                    var result = System.Text.Json.JsonSerializer.Deserialize<BookServiceDto>(responseBody, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    return result;
+                }
+                catch (System.Text.Json.JsonException ex)
+                {
+                    Console.Error.WriteLine($"JSON error in AcceptServiceByProfessional: {ex.Message}\nRaw response: {responseBody}");
+                    throw;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.Error.WriteLine($"HTTP request error in AcceptServiceByProfessional: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Unexpected error in AcceptServiceByProfessional: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<BookServiceDto?> RejectServiceByProfessional(BookServiceDto bookServiceDto)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(GlobalConstants.BaseAPIAddress + $"/api/BookService/RejectServiceByProfessional", bookServiceDto);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.Error.WriteLine($"HTTP error in RejectServiceByProfessional: StatusCode={response.StatusCode}, Body={responseBody}");
+                    throw new HttpRequestException($"Request failed with status {response.StatusCode}");
+                }
+                try
+                {
+                    var result = System.Text.Json.JsonSerializer.Deserialize<BookServiceDto>(responseBody, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    return result;
+                }
+                catch (System.Text.Json.JsonException ex)
+                {
+                    Console.Error.WriteLine($"JSON error in RejectServiceByProfessional: {ex.Message}\nRaw response: {responseBody}");
+                    throw;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.Error.WriteLine($"HTTP request error in RejectServiceByProfessional: {ex.Message}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Unexpected error in RejectServiceByProfessional: {ex.Message}");
                 throw;
             }
         }

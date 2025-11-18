@@ -1,0 +1,44 @@
+﻿@page "/myServiceRequests"
+@using Homakers.Applications.DTOs
+@inject NavigationManager _navigationManager
+@inject Homakers.Sevices.UIProfessionsServices _professionsService
+@inject Homakers.Sevices.UIProfessionalService _professionalService
+@inject Homakers.Sevices.UIUtilityServices _utilityServices
+@inject Homakers.Sevices.UIBookServicesService _bookServices
+
+<h3>My Requests</h3>
+
+
+
+@foreach (BookServiceDto myService in myServices)
+{
+    <div class="card custom-card" @onclick="() => OnBookService(myService)">
+        <div class="card-body pd-4">
+            <span class="card-text" style="float:left;font-size:13px;">@myService.ProfessionalName</span>
+            <span class="card-text" style="float:right;font-size:12px;">@myService.BookingStatus</span>
+        </div>
+        <div class="card-body pd-4">
+            <span class="card-text" style="float:left;font-size:12px;"><i class="zmdi zmdi-money mr-2"></i> @myService.ProfessionName</span>
+            <span class="card-text" style="float:right;font-size:12px;"><i class="zmdi zmdi-money mr-2"></i> @myService.TotalPrice</span>
+        </div>
+    </div>
+}
+
+@code {
+    private List<BookServiceDto> myServices { get; set; }
+    private string? CustomerID { get; set; }
+    protected override async Task OnParametersSetAsync()
+    {
+        myServices = new List<BookServiceDto>();
+        CustomerID = GlobalConstants.CustomerID;
+        if (CustomerID != null)
+        {
+            myServices = await _bookServices.GetBookingServiceByCustomerId(CustomerID);
+        }
+    }
+
+     private async Task OnBookService(BookServiceDto myService)
+    {
+        _navigationManager.NavigateTo($"/bookService?Id={myService.ProfessionalsID}&CustomerId={CustomerID}");
+    }
+}

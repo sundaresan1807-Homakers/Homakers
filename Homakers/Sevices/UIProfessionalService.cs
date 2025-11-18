@@ -34,7 +34,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Professionals/GetProfessionalsSummary?pageNumber={pageNumber}&pageSize={pageSize}&districtName={districtName}&professionName={professionName}&professionalName={professionalName}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Professionals/GetProfessionalsSummary?pageNumber={pageNumber}&pageSize={pageSize}&districtName={districtName}&professionName={professionName}&professionalName={professionalName}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -68,7 +68,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Professionals/GetProfessionalsAsync";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Professionals/GetProfessionalsAsync";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -103,7 +103,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Professionals/GetProfessionalsByUsername?username={username}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Professionals/GetProfessionalsByUsername?username={username}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 ProfessionalsDto? result = new ProfessionalsDto();
@@ -143,7 +143,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Professionals/GetProfessionalsByName?professionalName={professionalName}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Professionals/GetProfessionalsByName?professionalName={professionalName}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -178,7 +178,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Professionals/ValidateProfessional?username={username}&password={password}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Professionals/ValidateProfessional?username={username}&password={password}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 ProfessionalsDto? result = new ProfessionalsDto();
@@ -218,7 +218,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Professionals/GetProfessionalsByProfessionID?professionID={professionID}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Professionals/GetProfessionalsByProfessionID?professionID={professionID}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -253,7 +253,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Professionals/GetProfessionalsByProfessionalID?professionalID={professionalID}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Professionals/GetProfessionalsByProfessionalID?professionalID={professionalID}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)

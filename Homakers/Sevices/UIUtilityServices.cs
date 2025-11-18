@@ -21,7 +21,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Utility/GetDistrictsAsync";
+                var url =GlobalConstants.BaseAPIAddress+$"/api/Utility/GetDistrictsAsync";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)

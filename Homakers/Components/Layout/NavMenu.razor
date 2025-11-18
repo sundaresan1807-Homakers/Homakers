@@ -1,4 +1,10 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Homakers.SQLite.Models
+@inject Homakers.SQLite.CustomerSQLiteInitializer _sqliteCustomerDb
+@inject Homakers.SQLite.ProfessionalSQLiteServices _sqliteProfessionalDb
+@inject NavigationManager _navigationManager
+
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Homakers</a>
     </div>
@@ -7,26 +13,82 @@
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+        @if (sCustomer != null && sProfessional == null)
+        {
+            <div class="nav-item px-3" style="display:block;">
+                <NavLink class="nav-link" href="home">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+        }
+        else if (sCustomer == null && sProfessional != null)
+        {
+            <div class="nav-item px-3" style="display:block;">
+                <NavLink class="nav-link" href="professionalsHome">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Professional's Home
+                </NavLink>
+            </div>
+        }
+        <div class="nav-item px-3" style="display:block;">
+            <NavLink class="nav-link" href="myServiceRequests">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> My Requests
             </NavLink>
         </div>
         @* <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div> *@
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="login">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Login
-            </NavLink>
+                <NavLink class="nav-link" href="weather">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Login
+                </NavLink>
+            </div> *@
+        <div class="footer">
+
+            @if (sCustomer != null && sProfessional == null)
+            {
+                <div class="nav-item px-3" @onclick="LogoutCustomer" style="display:block;">
+                    <a class="nav-link">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+                    </a>
+                </div>
+            }
+            else if (sCustomer == null && sProfessional != null)
+            {
+                <div class="nav-item px-3" @onclick="LogoutProfessional" style="display:block;">
+                    <a class="nav-link">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Logout
+                    </a>
+                </div>
+            }
         </div>
     </nav>
 </div>
+@code {
+    private SCustomers sCustomer { get; set; }
+    private SProfessionals sProfessional { get; set; }
+    protected override void OnInitialized()
+    {
+        sCustomer = new SCustomers();
+        sProfessional = new SProfessionals();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        sCustomer = await _sqliteCustomerDb.GetCurrentCustomerAsync();
+        sProfessional = await _sqliteProfessionalDb.GetCurrentProfessionalAsync();
+    }
+    private async Task LogoutCustomer()
+    {
+        await _sqliteCustomerDb.DeletesCustomerAsync(sCustomer);
+        _navigationManager.NavigateTo("/");
+    }
+    private async Task LogoutProfessional()
+    {
+        await _sqliteProfessionalDb.DeletesProfessionalAsync(sProfessional);
+        _navigationManager.NavigateTo("/");
+    }
+}

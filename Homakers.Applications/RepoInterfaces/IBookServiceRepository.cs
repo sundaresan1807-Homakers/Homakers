@@ -14,5 +14,7 @@ namespace Homakers.Applications.RepoInterfaces
         public Task<List<BookService>> GetBookingServiceByProfessionalsID(Guid professionalsID);
         public Task<BookService> BookServiceByCustomer(BookServiceDto bookService);
         public Task<BookService> GetBookingServiceByUniqueKey(BookServicesUniqueKeysDto bookService);
+        public Task<BookService> AcceptServiceByProfessional(BookServiceDto bookServiceDto);
+        public Task<BookService> RejectServiceByProfessional(BookServiceDto bookServiceDto);
     }
 }

@@ -1,10 +1,5 @@
-﻿using Homakers.Domain.DataModels;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Homakers.Domain.DataModels
 {
@@ -14,7 +9,7 @@ namespace Homakers.Domain.DataModels
         public Guid BookServiceID { get; set; }
         public Guid CustomerID { get; set; }
         public Guid ProfessionID { get; set; }
-        public Guid ProfessionalsID { get; set; }
+        public Guid? ProfessionalsID { get; set; }
         public string? BookingStatus { get; set; }
         public DateTime? AcceptedDateTime { get; set; }
         public DateTime? RejectedDateTime { get; set; }

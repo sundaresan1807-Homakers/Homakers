@@ -6,7 +6,6 @@
 @inject Homakers.Sevices.UIUtilityServices _utilityServices
 @inject Homakers.Sevices.UIBookServicesService _bookServices
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
 <div class="container">
@@ -31,11 +30,11 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title" style="float:left;font-size:13px;">Price Range</h5>
-                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.MinPrice - @mappedProfessional.MaxPrice</p>
+                    <p class="card-text" style="float:right;font-size:12px;">₹ @mappedProfessional.MinPrice - @mappedProfessional.MaxPrice</p>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title" style="float:left;font-size:13px;">Mobile</h5>
-                    <p class="card-text" style="float:right;font-size:12px;">@mappedProfessional.Mobile</p>
+                    <p class="card-text" style="float:right;font-size:12px;">✆ @mappedProfessional.Mobile</p>
                 </div>
                 <div class="card-body">
                     <h5 class="card-title" style="float:left;font-size:13px;">Email</h5>
@@ -87,11 +86,12 @@
             uniqueKeysDto.ProfessionalsID = mappedProfessional.ProfessionalsID;
             customerBookedService = await _bookServices.GetBookingServiceByUniqueKey(uniqueKeysDto);
             BookServiceID = customerBookedService.BookServiceID;
+            GlobalConstants.CustomerID = CustomerId;
         }
     }
     private void GotoHome()
     {
-        _navigationManager.NavigateTo("/");
+        _navigationManager.NavigateTo("/home");
     }
 
     private void MapProfessional()

@@ -12,7 +12,7 @@ namespace Homakers.Applications.DTOs
         public Guid BookServiceID { get; set; }
         public Guid CustomerID { get; set; }
         public Guid ProfessionID { get; set; }
-        public Guid ProfessionalsID { get; set; }
+        public Guid? ProfessionalsID { get; set; }
         public string? BookingStatus { get; set; }
         public DateTime? AcceptedDateTime { get; set; }
         public DateTime? RejectedDateTime { get; set; }
@@ -22,5 +22,8 @@ namespace Homakers.Applications.DTOs
         public decimal TotalPrice { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime? UpdatedDateTime { get; set; }
+        public string? ProfessionName { get; set; }
+        public string? ProfessionalName { get; set; }
+        public string? CustomerName { get; set; }
     }
 }

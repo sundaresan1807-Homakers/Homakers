@@ -51,5 +51,23 @@ namespace Homakers.Infrastructure.Repositories
             }
             return customer;
         }
+
+        public async Task<Profession?> GetProfessionByProfessionID(Guid professionID)
+        {
+            Profession? profession = new Profession();
+            try
+            {
+                profession = await _dbContext.Profession.Where(pro => pro.ProfessionID == professionID).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+
+            }
+            return profession;
+        }
     }
 }

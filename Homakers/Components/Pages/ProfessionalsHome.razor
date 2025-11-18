@@ -1,0 +1,139 @@
+﻿@page "/professionalsHome"
+@using Homakers.Applications.DTOs
+@using Homakers.SQLite.Models
+@inject Homakers.Sevices.UICustomerService _customerService
+@inject Homakers.Sevices.UIProfessionalService _professionalService
+@inject Homakers.Sevices.UIBookServicesService _bookServices
+@inject Homakers.SQLite.ProfessionalSQLiteServices _sqliteProfessionalDb
+<h3>New Requests</h3>
+
+<div class="container">
+    @if (error != null || error == "")
+    {
+        <p>
+            @error
+        </p>
+    }
+    <div class="row">
+        <div class="col-lg-10 mx-auto" style="height:90vh;">
+
+            <div class="career-search mb-60">
+                <div class="filter-result">
+                    <div class="card custom-card">
+                        <div class="card-body pd-4">
+                            <div class="row">
+
+                                <div class="col-xl-12">
+                                    <button type="button" class="btn btn-sm btn-primary" id="refreshService" @onclick="RefreshService" style="padding:7px;float:right;">
+                                        Refresh
+                                    </button>
+                                </div>
+                            </div>
+                            <span class="card-text" style="float:left;font-size:15px;"></span>
+                        </div>
+                        <div class="card-body pd-4">
+                            <span class="card-text" style="float:left;font-size:14px;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-result" style="overflow:auto;height:65vh;">
+                    @foreach (BookServiceDto service in myServices)
+                    {
+                        <div class="card custom-card" style="box-shadow:1px 3px 4px 0px #686466e0, 1px 3px 4px 0 #686466e0;margin-left: 5px;width: 98%;padding: 5px;">
+                            <div class="card-body pd-4">
+                                <span class="card-text" style="float:left;font-size:15px;">@service.CustomerName</span>
+                                <span class="card-text" style="float:right;font-size:14px;">@service.TotalPrice</span>
+                            </div>
+                            <div class="card-body pd-4">
+                                <span class="card-text" style="float:left;font-size:15px;">@service.ProfessionName</span>
+                                @if (service.BookingStatus == "Pending")
+                                {
+                                    <span class="card-text" style="float:right;font-size:14px;font-weight:bold;color:darkorange;">@service.BookingStatus</span>
+                                }
+                                else if (service.BookingStatus == "Accepted")
+                                {
+                                    <span class="card-text" style="float:right;font-size:14px;font-weight:bold;color:forestgreen;">@service.BookingStatus</span>
+                                }
+                                else if (service.BookingStatus == "Rejected")
+                                {
+                                    <span class="card-text" style="float:right;font-size:14px;font-weight:bold;color:indianred;">@service.BookingStatus</span>
+                                }
+                            </div>
+                            @if (service.BookingStatus == "Pending")
+                            {
+                                <div class="card-body pd-4">
+                                    <span class="card-text" style="float:right;font-size:14px;">
+                                        <button type="button" href="#" class="btn btn-primary" @onclick="() => OnAcceptService(service)">Accept Service</button>
+                                        <button type="button" href="#" class="btn btn-danger" @onclick="() => OnRejectService(service)">Reject Service</button>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript"></script>
+
+@code {
+    private string error { get; set; }
+    private List<BookServiceDto> myServices { get; set; }
+    private SProfessionals sProfessional { get; set; }
+    private BookServiceDto? acceptedBookedService { get; set; }
+    private BookServiceDto? rejectedBookedService { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        myServices = new List<BookServiceDto>();
+        sProfessional = new SProfessionals();
+        acceptedBookedService = new BookServiceDto();
+        rejectedBookedService = new BookServiceDto();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        sProfessional = await _sqliteProfessionalDb.GetCurrentProfessionalAsync();
+        myServices = await _bookServices.GetBookingServiceByProfessionalsID(sProfessional.ProfessionalsID.ToString());
+    }
+
+    private async Task RefreshService()
+    {
+        myServices = await _bookServices.GetBookingServiceByProfessionalsID(sProfessional.ProfessionalsID.ToString());
+    }
+
+    private async Task OnAcceptService(BookServiceDto service)
+    {
+        BookServiceDto bookService = new BookServiceDto();
+        bookService.CustomerID = service.CustomerID;
+        bookService.ProfessionalsID = service.ProfessionalsID;
+        bookService.ProfessionID = service.ProfessionID;
+        bookService.Price = service.Price;
+        bookService.SGST = service.SGST;
+        bookService.CGST = service.CGST;
+        bookService.TotalPrice = service.Price + service.SGST + service.CGST;
+        bookService.CreatedDateTime = service.CreatedDateTime;
+        acceptedBookedService = await _bookServices.AcceptServiceByProfessional(bookService);
+        RefreshService();
+    }
+
+    private async Task OnRejectService(BookServiceDto service)
+    {
+        BookServiceDto bookService = new BookServiceDto();
+        bookService.CustomerID = service.CustomerID;
+        bookService.ProfessionalsID = service.ProfessionalsID;
+        bookService.ProfessionID = service.ProfessionID;
+        bookService.Price = service.Price;
+        bookService.SGST = service.SGST;
+        bookService.CGST = service.CGST;
+        bookService.TotalPrice = service.Price + service.SGST + service.CGST;
+        bookService.CreatedDateTime = service.CreatedDateTime;
+        acceptedBookedService = await _bookServices.RejectServiceByProfessional(bookService);
+        RefreshService();
+    }
+}

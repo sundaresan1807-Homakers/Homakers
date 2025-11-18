@@ -1,23 +1,66 @@
-﻿@page "/login"
+﻿@page "/"
 @using Homakers.Applications.DTOs
 @using Homakers.SQLite.Models
 @inject Homakers.Sevices.UICustomerService _customerService
+@inject Homakers.Sevices.UIProfessionalService _professionalService
+@inject Homakers.Sevices.UIProfessionsServices _professionsService
+@inject Homakers.Sevices.UIUtilityServices _utilityServices
 
-@inject Homakers.SQLite.CustomerSQLiteInitializer _sqliteDb
+@inject Homakers.SQLite.CustomerSQLiteInitializer _sqliteCustomerDb
+@inject Homakers.SQLite.ProfessionalSQLiteServices _sqliteProfessionalDb
 @inject NavigationManager _navigationManager
 
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <div>
-    <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input id="username" class="form-control" @bind="@(_customer.Username)" />
-    </div>
+    <div class="container">
+        <div class="col-xl-12">
+            <div class="d-flex justify-content-center align-items-center mt-5">
+                <div class="card">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item text-center">
+                            <a class="nav-link active btl" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Customer Login</a>
+                        </li>
+                        <li class="nav-item text-center">
+                            <a class="nav-link btr" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Professionals Login</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                            <div class="form px-4 pt-5 pb-4">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input id="username" class="form-control" placeholder="Customer's Username" @bind="@(_customer.Username)" />
+                                </div>
 
-    <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input id="password" type="password" class="form-control" @bind="@_customer.Password" />
-    </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input id="password" type="password" class="form-control" placeholder="Customer's Password" @bind="@_customer.Password" />
+                                </div>
 
-    <button type="button" @onclick="HandleLogin" class="btn btn-primary">Login</button>
+                                <button type="button" @onclick="HandleLogin" class="btn btn-primary btn-block">Login</button>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                            <div class="form px-4 pt-5 pb-4">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input id="username" class="form-control" placeholder="Profesional's Username" @bind="@(_professional.Username)" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input id="password" type="password" class="form-control" placeholder="Profesional's Password" @bind="@_professional.Password" />
+                                </div>
+
+                                <button type="button" @onclick="ProfessionalSubmit" class="btn btn-primary btn-block">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @if (!string.IsNullOrEmpty(errorMessage))
     {
@@ -34,22 +77,44 @@
         </p>
     }
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js" autostart="false"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" autostart="false"></script>
 
 @code {
     private CustomerDto? _customer { get; set; }
+    private ProfessionalsDto? _professional { get; set; }
     private string? errorMessage; string? successMessage;
     private string error { get; set; }
     private SCustomers sCustomer { get; set; }
+    private SProfessionals sProfessional { get; set; }
+    private static List<DistrictsDto>? districtList { get; set; }
+    private List<ProfessionsDto>? professionList { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _customer = new CustomerDto();
+        _professional = new ProfessionalsDto();
         sCustomer = new SCustomers();
+        sProfessional = new SProfessionals();
+        districtList = await _utilityServices.GetDistrictsAsync();
+        professionList = await _professionsService.GetProfessionsAsync();
+        GlobalConstants.DistrictList = districtList;
+        GlobalConstants.ProfessionList = professionList;
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        sCustomer = await _sqliteDb.GetCurrentCustomerAsync();
+        sCustomer = await _sqliteCustomerDb.GetCurrentCustomerAsync();
+        sProfessional = await _sqliteProfessionalDb.GetCurrentProfessionalAsync();
+        if (sCustomer != null && sProfessional == null)
+        {
+            _navigationManager.NavigateTo("/home");
+        }
+        else if (sCustomer == null && sProfessional != null)
+        {
+            _navigationManager.NavigateTo("/professionalshome");
+        }
+
     }
 
     private async Task HandleLogin()
@@ -59,6 +124,7 @@
             CustomerDto? customerDto = await _customerService.ValidateCustomer(_customer.Username, _customer.Password);
             if (customerDto.Username != null)
             {
+                GlobalConstants.CustomerID = customerDto.CustomerID.ToString();
                 errorMessage = string.Empty;
                 successMessage = "Login Success";
                 SCustomers sCustomer = new SCustomers();
@@ -69,8 +135,41 @@
                 sCustomer.Username = customerDto.Username;
                 sCustomer.Password = customerDto.Password;
                 sCustomer.IsActive = true;
-                await _sqliteDb.SavesCustomerAsync(sCustomer);
-                _navigationManager.NavigateTo($"/");
+                await _sqliteCustomerDb.SavesCustomerAsync(sCustomer);
+                _navigationManager.NavigateTo($"/home");
+            }
+            else
+            {
+                successMessage = string.Empty;
+                errorMessage = "Invalid username or password.";
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private async Task ProfessionalSubmit()
+    {
+        try
+        {
+            ProfessionalsDto? professionalDto = await _professionalService.ValidateProfessional(_professional.Username, _professional.Password);
+            if (professionalDto.Username != null)
+            {
+                GlobalConstants.ProfessionalID = professionalDto.ProfessionalsID.ToString();
+                errorMessage = string.Empty;
+                successMessage = "Login Success";
+                sProfessional = new SProfessionals();
+                sProfessional.ProfessionalsID = professionalDto.ProfessionalsID;
+                sProfessional.Name = professionalDto.Name;
+                sProfessional.Email = professionalDto.Email;
+                sProfessional.Mobile = professionalDto.Mobile;
+                sProfessional.Username = professionalDto.Username;
+                sProfessional.Password = professionalDto.Password;
+                sProfessional.IsActive = true;
+                await _sqliteProfessionalDb.SavesProfessionalAsync(sProfessional);
+                _navigationManager.NavigateTo($"/ProfessionalsHome");
             }
             else
             {

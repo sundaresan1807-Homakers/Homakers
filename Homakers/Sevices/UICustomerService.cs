@@ -23,7 +23,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Customer/GetCustomers";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Customer/GetCustomers";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -58,7 +58,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Customer/GetCustomerByUsername?username={username}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Customer/GetCustomerByUsername?username={username}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 CustomerDto? result = new CustomerDto();
@@ -98,7 +98,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Customer/GetCustomerByName?customerName={customerName}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Customer/GetCustomerByName?customerName={customerName}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -133,7 +133,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Customer/ValidateCustomer?username={username}&password={password}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Customer/ValidateCustomer?username={username}&password={password}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 CustomerDto? result = new CustomerDto();

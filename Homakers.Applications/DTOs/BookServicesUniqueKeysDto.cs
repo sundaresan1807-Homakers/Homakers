@@ -10,6 +10,6 @@ namespace Homakers.Applications.DTOs
     {
         public Guid CustomerID { get; set; }
         public Guid ProfessionID { get; set; }
-        public Guid ProfessionalsID { get; set; }
+        public Guid? ProfessionalsID { get; set; }
     }
 }

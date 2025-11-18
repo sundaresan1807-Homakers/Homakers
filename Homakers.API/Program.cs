@@ -8,6 +8,7 @@ using Homakers.Applications.Services;
 using Homakers.Domain;
 using Homakers.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 
@@ -24,7 +25,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<HomakerContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HomakerDB")));
+builder.Services.AddDbContext<HomakerContext>(
+    options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("HomakerDB"));
+        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    });
+
 // Auto mapper Configuration
 builder.Services.AddAutoMapper(typeof(HomakersProfile));
 

@@ -11,5 +11,6 @@ namespace Homakers.Applications.RepoInterfaces
     {
         public Task<List<Profession>> GetProfessionsAsync();
         public Task<Profession?> GetProfessionByProfessionName(string professionName);
+        public Task<Profession?> GetProfessionByProfessionID(Guid professionID);
     }
 }

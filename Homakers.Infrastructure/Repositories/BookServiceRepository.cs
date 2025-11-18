@@ -75,7 +75,7 @@ namespace Homakers.Infrastructure.Repositories
 
         public async Task<BookService> BookServiceByCustomer(BookServiceDto bookServiceDto)
         {
-            BookService BookedServiceList = new BookService();
+            BookService BookedServiceByUniqueKeys = new BookService();
             BookService bookService = new BookService();
             BookServicesUniqueKeysDto uniqueKeysDto = new BookServicesUniqueKeysDto();
             try
@@ -96,12 +96,12 @@ namespace Homakers.Infrastructure.Repositories
                 uniqueKeysDto.CustomerID = bookServiceDto.CustomerID;
                 uniqueKeysDto.ProfessionID = bookServiceDto.ProfessionID;
                 uniqueKeysDto.ProfessionalsID = bookServiceDto.ProfessionalsID;
-                BookedServiceList = await GetBookingServiceByUniqueKey(uniqueKeysDto);
-                if (BookedServiceList == null)
+                BookedServiceByUniqueKeys = await GetBookingServiceByUniqueKey(uniqueKeysDto);
+                if (BookedServiceByUniqueKeys == null)
                 {
                     await _dbContext.BookService.AddAsync(bookService);
                     _dbContext.SaveChanges();
-                    BookedServiceList = await GetBookingServiceByUniqueKey(uniqueKeysDto);
+                    BookedServiceByUniqueKeys = await GetBookingServiceByUniqueKey(uniqueKeysDto);
                 }
             }
             catch (Exception ex)
@@ -112,7 +112,86 @@ namespace Homakers.Infrastructure.Repositories
             {
 
             }
-            return BookedServiceList;
+            return BookedServiceByUniqueKeys;
+        }
+        public async Task<BookService> AcceptServiceByProfessional(BookServiceDto bookServiceDto)
+        {
+            BookService BookedServiceByUniqueKeys = new BookService();
+            BookService bookService = new BookService();
+            BookServicesUniqueKeysDto uniqueKeysDto = new BookServicesUniqueKeysDto();
+            try
+            {
+                uniqueKeysDto.CustomerID = bookServiceDto.CustomerID;
+                uniqueKeysDto.ProfessionID = bookServiceDto.ProfessionID;
+                uniqueKeysDto.ProfessionalsID = bookServiceDto.ProfessionalsID;
+                BookedServiceByUniqueKeys = await GetBookingServiceByUniqueKey(uniqueKeysDto);
+                
+                bookService.BookServiceID = BookedServiceByUniqueKeys.BookServiceID;
+                bookService.CustomerID = BookedServiceByUniqueKeys.CustomerID;
+                bookService.ProfessionalsID = BookedServiceByUniqueKeys.ProfessionalsID;
+                bookService.ProfessionID = BookedServiceByUniqueKeys.ProfessionID;
+                bookService.Price = BookedServiceByUniqueKeys.Price;
+                bookService.SGST = BookedServiceByUniqueKeys.SGST;
+                bookService.CGST = BookedServiceByUniqueKeys.CGST;
+                bookService.TotalPrice = BookedServiceByUniqueKeys.Price + BookedServiceByUniqueKeys.SGST + BookedServiceByUniqueKeys.CGST;
+                bookService.CreatedDateTime = BookedServiceByUniqueKeys.CreatedDateTime;
+                bookService.BookingStatus = "Accepted";
+                bookService.AcceptedDateTime = DateTime.Now;
+                bookService.RejectedDateTime = null;
+                bookService.UpdatedDateTime = BookedServiceByUniqueKeys.UpdatedDateTime;
+                _dbContext.BookService.Update(bookService);
+                _dbContext.SaveChanges();
+                BookedServiceByUniqueKeys = await GetBookingServiceByUniqueKey(uniqueKeysDto);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+
+            }
+            return BookedServiceByUniqueKeys;
+        }
+
+        public async Task<BookService> RejectServiceByProfessional(BookServiceDto bookServiceDto)
+        {
+            BookService BookedServiceByUniqueKeys = new BookService();
+            BookService bookService = new BookService();
+            BookServicesUniqueKeysDto uniqueKeysDto = new BookServicesUniqueKeysDto();
+            try
+            {
+                uniqueKeysDto.CustomerID = bookServiceDto.CustomerID;
+                uniqueKeysDto.ProfessionID = bookServiceDto.ProfessionID;
+                uniqueKeysDto.ProfessionalsID = bookServiceDto.ProfessionalsID;
+                BookedServiceByUniqueKeys = await GetBookingServiceByUniqueKey(uniqueKeysDto);
+
+                bookService.BookServiceID = BookedServiceByUniqueKeys.BookServiceID;
+                bookService.CustomerID = BookedServiceByUniqueKeys.CustomerID;
+                bookService.ProfessionalsID = BookedServiceByUniqueKeys.ProfessionalsID;
+                bookService.ProfessionID = BookedServiceByUniqueKeys.ProfessionID;
+                bookService.Price = BookedServiceByUniqueKeys.Price;
+                bookService.SGST = BookedServiceByUniqueKeys.SGST;
+                bookService.CGST = BookedServiceByUniqueKeys.CGST;
+                bookService.TotalPrice = BookedServiceByUniqueKeys.Price + BookedServiceByUniqueKeys.SGST + BookedServiceByUniqueKeys.CGST;
+                bookService.CreatedDateTime = BookedServiceByUniqueKeys.CreatedDateTime;
+                bookService.BookingStatus = "Rejected";
+                bookService.AcceptedDateTime = null;
+                bookService.RejectedDateTime = DateTime.Now;
+                bookService.UpdatedDateTime = BookedServiceByUniqueKeys.UpdatedDateTime;
+                _dbContext.BookService.Update(bookService);
+                _dbContext.SaveChanges();
+                BookedServiceByUniqueKeys = await GetBookingServiceByUniqueKey(uniqueKeysDto);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+
+            }
+            return BookedServiceByUniqueKeys;
         }
     }
 }

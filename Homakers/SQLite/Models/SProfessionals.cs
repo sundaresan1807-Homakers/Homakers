@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Homakers.SQLite.Models
 {
     public class SProfessionals
     {
-        [Key]
+        [PrimaryKey]
         public Guid ProfessionalsID { get; set; }
         public string? Name { get; set; }
         public string? Email { get; set; }
@@ -17,5 +18,6 @@ namespace Homakers.SQLite.Models
         public string? Password { get; set; }
         public int Mobile { get; set; }
         public Guid ProfessionID { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -43,5 +43,19 @@ namespace Homakers.API.Controllers
             var customerBookedService = await _bookServicesService.GetBookingServiceByUniqueKey(bookService);
             return Ok(customerBookedService);
         }
+
+        [HttpPost("AcceptServiceByProfessional")]
+        public async Task<ActionResult> AcceptServiceByProfessional([FromBody] BookServiceDto bookService)
+        {
+            var customerBookedService = await _bookServicesService.AcceptServiceByProfessional(bookService);
+            return Ok(customerBookedService);
+        }
+
+        [HttpPost("RejectServiceByProfessional")]
+        public async Task<ActionResult> RejectServiceByProfessional([FromBody] BookServiceDto bookService)
+        {
+            var customerBookedService = await _bookServicesService.RejectServiceByProfessional(bookService);
+            return Ok(customerBookedService);
+        }
     }
 }

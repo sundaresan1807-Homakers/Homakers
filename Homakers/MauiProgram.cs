@@ -31,16 +31,18 @@ namespace Homakers
             builder.Services.AddScoped<UIBookServicesService, UIBookServicesService>();
             builder.Services.AddScoped<HttpClient, HttpClient>();
 
+
             //builder.Services.AddSingleton<CustomerSQLiteInitializer>();
             builder.Services.AddSingleton<ProfessionSQLiteServices>();
             builder.Services.AddSingleton<GlobalConstants>();
 
-            GlobalConstants.BaseAPIAddress = Environment.GetEnvironmentVariable("APIBaseAddress");
+            //GlobalConstants.BaseAPIAddress = Environment.GetEnvironmentVariable("APIBaseAddress");
             SQLitePCL.Batteries_V2.Init();
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "HomakerDb.db3");
             builder.Services.AddSingleton(s => new CustomerSQLiteInitializer(dbPath));
+            builder.Services.AddSingleton(s => new ProfessionalSQLiteServices(dbPath));
 
-
+            
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();

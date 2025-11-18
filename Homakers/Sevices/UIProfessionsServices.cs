@@ -17,7 +17,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Profession/GetProfessionsAsync";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Profession/GetProfessionsAsync";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
@@ -51,7 +51,7 @@ namespace Homakers.Sevices
         {
             try
             {
-                var url = $"https://homakerapi-dev-bjf4b3bsgkhndmgf.canadacentral-01.azurewebsites.net/api/Profession/GetProfessionsByUsername?name={name}";
+                var url = GlobalConstants.BaseAPIAddress+$"/api/Profession/GetProfessionsByUsername?name={name}";
                 var response = await _httpClient.GetAsync(url);
                 var responseBody = await response.Content.ReadAsStringAsync();
                 if (!response.IsSuccessStatusCode)
